@@ -14,3 +14,4 @@ six==1.16.0
 SQLAlchemy==1.2.19
 tqdm==4.64.1
 flask
+gunicorn
