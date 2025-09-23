@@ -3,7 +3,7 @@ from bot import get_bot_response
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+CORS(app, origins=["http://localhost:3000", "https://meangpt.netlify.app"])
 
 @app.route("/chat", methods=["POST"])
 def chat():
