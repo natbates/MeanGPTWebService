@@ -13,9 +13,13 @@ def chat():
 
     user_message = data["message"]
     settings = data.get("settings", {})
+
+    # Log message and settings
+    print(f"[CHAT LOG] User message: {user_message}")
+    print(f"[CHAT LOG] Settings: {settings}")
+
     bot_reply = get_bot_response(user_message, settings)
     return jsonify({"response": bot_reply})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
