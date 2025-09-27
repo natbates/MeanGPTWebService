@@ -12,7 +12,8 @@ def chat():
         return jsonify({"error": "Missing 'message' field"}), 400
 
     user_message = data["message"]
-    bot_reply = get_bot_response(user_message)
+    settings = data.get("settings", {})
+    bot_reply = get_bot_response(user_message, settings)
     return jsonify({"response": bot_reply})
 
 

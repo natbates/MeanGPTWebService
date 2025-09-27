@@ -12,6 +12,16 @@ trainer = ListTrainer(chatbot)
 cleaned_corpus = clean_corpus(CORPUS_FILE)
 trainer.train(cleaned_corpus)
 
-def get_bot_response(message: str) -> str:
-    """Return the chatbot response for a given message."""
+def get_bot_response(message: str, settings: dict = None) -> str:
+    """
+    Return the chatbot response for a given message.
+    Settings can control logic adapters or similarity threshold.
+    """
+    if not settings:
+        settings = {}
+
+    # Example: override default maximum similarity
+    max_sim = settings.get("max_similarity", 0.9)
+    chatbot.logic_adapters[0].maximum_similarity_threshold = max_sim
+
     return str(chatbot.get_response(message))
