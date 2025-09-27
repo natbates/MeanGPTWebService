@@ -5,6 +5,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000", "https://meangpt.netlify.app"])
 
+@app.route("/ping", methods=["GET"])
+def ping():
+    return jsonify({"status": "ok", "message": "Service is online"}), 200
+
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
