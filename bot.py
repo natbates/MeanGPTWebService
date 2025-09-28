@@ -1,27 +1,43 @@
-from cleaner import clean_corpus
-from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
-CORPUS_FILE = "chat.txt"
+load_dotenv()
+api_key = os.environ.get("GOOGLE_API_KEY")
+if not api_key:
+    raise ValueError("GOOGLE_API_KEY environment variable not set")
+genai.configure(api_key=api_key)
 
-# Create ChatBot instance
-chatbot = ChatBot("Chatpot")
+DEFAULT_MODEL = "gemini-2.5-pro"
 
-# Train the bot
-trainer = ListTrainer(chatbot)
-cleaned_corpus = clean_corpus(CORPUS_FILE)
-trainer.train(cleaned_corpus)
-
-def get_bot_response(message: str, settings: dict = None) -> str:
-    """
-    Return the chatbot response for a given message.
-    Settings can control logic adapters or similarity threshold.
-    """
-    if not settings:
+def get_bot_response(prompt: str, settings: dict = None) -> str:
+    if settings is None:
         settings = {}
 
-    # Example: override default maximum similarity
-    max_sim = settings.get("max_similarity", 0.9)
-    chatbot.logic_adapters[0].maximum_similarity_threshold = max_sim
+    print("Settings: ", settings)
 
-    return str(chatbot.get_response(message))
+    mean_level = max(0, min(10, settings.get("mean_level", 7)))
+    reply_length = settings.get("reply_length", "short")
+    model_name = settings.get("model", "gemini-2.5-pro")
+
+    length_words = {"short": "under 50 words", "medium": "around 150 words", "long": "up to 300 words"}
+    length_text = length_words.get(reply_length, "under 50 words")
+
+    system_prompt = (
+        f"You are a sarcastic AI assistant. "
+        f"Mean level: {mean_level}/10. "
+        f"Reply length: {length_text}. "
+        f"Be blunt, sarcastic, argumentive, concise, and a little rude."
+    )
+
+    try:
+        model = genai.GenerativeModel(model_name=model_name)
+        chat = model.start_chat()
+        chat.send_message(system_prompt)
+        response = chat.send_message(prompt)
+        print(response.text)
+        return response.text
+
+    except Exception as e:
+        print("Error calling generative API:", e)
+        return "I refuse to answer right now."
