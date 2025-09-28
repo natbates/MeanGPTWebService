@@ -40,4 +40,5 @@ def get_bot_response(prompt: str, settings: dict = None) -> str:
 
     except Exception as e:
         print("Error calling generative API:", e)
-        return "I refuse to answer right now."
+        raise RuntimeError(f"Generative API error: {e}") from e
+
