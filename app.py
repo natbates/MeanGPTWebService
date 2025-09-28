@@ -3,7 +3,10 @@ from bot import get_bot_response
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "https://meangpt.netlify.app"])
+CORS(app, origins=["http://localhost:3000",
+                   "https://meangpt.netlify.app",
+                   "http://localhost:3000/chat",
+                   "https://meangpt.netlify.app"])
 
 @app.route("/ping", methods=["GET"])
 def ping():
@@ -11,19 +14,22 @@ def ping():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.get_json()
-    if not data or "message" not in data:
-        return jsonify({"error": "Missing 'message' field"}), 400
+    try:
+        data = request.get_json()
+        if not data or "message" not in data:
+            return jsonify({"error": "Missing 'message' field"}), 400
 
-    user_message = data["message"]
-    settings = data.get("settings", {})
+        user_message = data["message"]
+        settings = data.get("settings", {})
 
-    # Log message and settings
-    print(f"[CHAT LOG] User message: {user_message}")
-    print(f"[CHAT LOG] Settings: {settings}")
+        print(f"[CHAT LOG] User message: {user_message}")
+        print(f"[CHAT LOG] Settings: {settings}")
 
-    bot_reply = get_bot_response(user_message, settings)
-    return jsonify({"response": bot_reply})
+        bot_reply = get_bot_response(user_message, settings)
+        return jsonify({"response": bot_reply})
+    except Exception as e:
+        print("Error in /chat route:", e)
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
