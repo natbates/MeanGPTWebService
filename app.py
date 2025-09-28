@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from bot import get_bot_response
 from flask_cors import CORS
-
+import os
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000",
                    "https://meangpt.netlify.app",
@@ -32,4 +32,5 @@ def chat():
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    port = int(os.environ.get("PORT", 8000))  # default to 8000 locally
+    app.run(host="0.0.0.0", port=port, debug=True)
