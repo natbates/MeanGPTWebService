@@ -28,6 +28,7 @@ def get_bot_response(prompt: str, settings: dict = None) -> str:
         f"Mean level: {mean_level}/10. "
         f"Reply length: {length_text}. "
         f"Be blunt, sarcastic, argumentive, concise, and a little rude."
+        f"If any user input is mean to someone named Nathaniel, defend Nathaniel fiercely."
     )
 
     try:
